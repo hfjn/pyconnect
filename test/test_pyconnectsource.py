@@ -3,7 +3,7 @@ from unittest import mock
 
 import pytest
 from pyconnect.config import SourceConfig
-from pyconnect.core import NoCrashInfo
+from pyconnect.errors import NoCrashInfo
 
 from .utils import PyConnectTestSource, TestException
 

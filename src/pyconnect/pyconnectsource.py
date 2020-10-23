@@ -5,11 +5,12 @@ from typing import Any, Optional, Tuple
 from confluent_kafka.avro import AvroConsumer, AvroProducer
 from confluent_kafka.cimpl import KafkaError, TopicPartition
 from loguru import logger
-
 from pyconnect.config import configure_logging
+
+from . import PyConnectException
 from .avroparser import to_key_schema, to_value_schema
 from .config import SourceConfig
-from .core import BaseConnector, PyConnectException, Status, hide_sensitive_values
+from .core import BaseConnector, Status, hide_sensitive_values
 
 
 class PyConnectSource(BaseConnector, metaclass=ABCMeta):

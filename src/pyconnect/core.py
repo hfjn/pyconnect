@@ -1,15 +1,17 @@
 """
 This module contains central dependencies for all other modules such as base exceptions or base classes
 """
-from abc import ABCMeta, abstractmethod
 import hashlib
-from enum import Enum
 import os
-from typing import Any, Callable, Optional, Dict
+from abc import ABCMeta, abstractmethod
+from enum import Enum
+from typing import Any, Callable, Dict, Optional
 
 from confluent_kafka import KafkaException
 from confluent_kafka.cimpl import Message
 from loguru import logger
+from pyconnect import PyConnectException
+from pyconnect.errors import NoCrashInfo
 
 
 def message_repr(msg: Message) -> str:
@@ -54,22 +56,6 @@ def hide_sensitive_values(
             else:
                 config_copy[key] = "****"
     return config_copy
-
-
-class PyConnectException(Exception):
-    """
-    Base Class for all exceptions raised by the PyConnect framework.
-    """
-
-    pass
-
-
-class NoCrashInfo(PyConnectException):
-    """
-    Exception that says that a callback returned `Status.CRASHED` without supplying any exception for status_info.
-    """
-
-    pass
 
 
 class Status(Enum):

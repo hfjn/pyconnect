@@ -4,7 +4,6 @@ import pathlib
 from typing import Any, Optional, TextIO, Tuple
 
 from loguru import logger
-
 from pyconnect import PyConnectSource, SourceConfig
 from pyconnect.core import Status
 
