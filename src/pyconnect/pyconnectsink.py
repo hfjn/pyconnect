@@ -137,7 +137,7 @@ class PyConnectSink(BaseConnector, metaclass=ABCMeta):
         super().__init__()
         self.config = config
 
-        if self.config["unify_logging"]:
+        if self.config.unify_logging:
             configure_logging()
         self.current_message: Optional[Message] = None
         self.__offsets: Dict[Tuple[str, int], TopicPartition] = {}
@@ -145,11 +145,11 @@ class PyConnectSink(BaseConnector, metaclass=ABCMeta):
         self._consumer: RichAvroConsumer = self._make_consumer()
 
     def _make_consumer(self) -> RichAvroConsumer:
-        hash_sensitive_values = self.config["hash_sensitive_values"]
+        hash_sensitive_values = self.config.hash_sensitive_values
         config = {
-            "bootstrap.servers": ",".join(self.config["bootstrap_servers"]),
-            "group.id": self.config["group_id"],
-            "schema.registry.url": self.config["schema_registry"],
+            "bootstrap.servers": ",".join(self.config.bootstrap_servers),
+            "group.id": self.config.group_id,
+            "schema.registry.url": self.config.schema_registry,
             # We need to commit offsets manually once we're sure it got saved
             # to the sink
             "enable.auto.commit": False,
@@ -158,13 +158,13 @@ class PyConnectSink(BaseConnector, metaclass=ABCMeta):
             # We need this to start at the last committed offset instead of the
             # latest when subscribing for the first time
             "default.topic.config": {"auto.offset.reset": "earliest"},
-            **self.config["kafka_opts"],
+            **self.config.kafka_opts,
         }
         consumer = RichAvroConsumer(config)
         hidden_config = hide_sensitive_values(config, hash_sensitive_values=hash_sensitive_values)
         logger.info(f"AvroConsumer created with config: {hidden_config}")
         # noinspection PyArgumentList
-        consumer.subscribe(self.config["topics"], on_assign=self._on_assign, on_revoke=self._on_revoke)
+        consumer.subscribe(self.config.topics, on_assign=self._on_assign, on_revoke=self._on_revoke)
         return consumer
 
     def _on_assign(self, _, partitions: List[TopicPartition]) -> None:
@@ -220,7 +220,7 @@ class PyConnectSink(BaseConnector, metaclass=ABCMeta):
         try:
             self.current_message = None
             self._status_info = None
-            msg = self._consumer.poll(self.config["poll_timeout"])
+            msg = self._consumer.poll(self.config.poll_timeout)
             self.current_message = msg
             self._flush_if_needed()
             self._call_right_handler_for_message(msg)
@@ -376,7 +376,7 @@ class PyConnectSink(BaseConnector, metaclass=ABCMeta):
         if not offsets:
             logger.info("No offsets to commit.")
         else:
-            max_attempts: int = self.config["sink_commit_retry_count"]
+            max_attempts: int = self.config.sink_commit_retry_count
             attempt_count: int = 1
             while attempt_count <= max_attempts:
                 try:

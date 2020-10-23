@@ -22,7 +22,7 @@ class PyConnectSource(BaseConnector, metaclass=ABCMeta):
     def __init__(self, config: SourceConfig) -> None:
         super().__init__()
         self.config = config
-        if self.config["unify_logging"]:
+        if self.config.unify_logging:
             configure_logging()
         self._producer = self._make_producer()
         self._offset_consumer = self._make_offset_consumer()
@@ -35,11 +35,11 @@ class PyConnectSource(BaseConnector, metaclass=ABCMeta):
         Creates the underlying instance of :class:`confluent_kafka.avro.AvroProducer` which is used to publish
         messages and producer offsets.
         """
-        hash_sensitive_values = self.config["hash_sensitive_values"]
+        hash_sensitive_values = self.config.hash_sensitive_values
         config = {
-            "bootstrap.servers": ",".join(self.config["bootstrap_servers"]),
-            "schema.registry.url": self.config["schema_registry"],
-            **self.config["kafka_opts"],
+            "bootstrap.servers": ",".join(self.config.bootstrap_servers),
+            "schema.registry.url": self.config.schema_registry,
+            **self.config.kafka_opts,
         }
         hidden_config = hide_sensitive_values(config, hash_sensitive_values=hash_sensitive_values)
         logger.info(f"AvroProducer created with config: {hidden_config}")
@@ -51,11 +51,11 @@ class PyConnectSource(BaseConnector, metaclass=ABCMeta):
         committed producer offsets.
         """
         config = {
-            "bootstrap.servers": ",".join(self.config["bootstrap_servers"]),
-            "schema.registry.url": self.config["schema_registry"],
+            "bootstrap.servers": ",".join(self.config.bootstrap_servers),
+            "schema.registry.url": self.config.schema_registry,
             "enable.auto.commit": False,
             "enable.partition.eof": True,
-            "group.id": f'{self.config["offset_topic"]}_fetcher',
+            "group.id": f"{self.config.offset_topic}_fetcher",
             "default.topic.config": {"auto.offset.reset": "latest"},
         }
         offset_consumer = AvroConsumer(config)
@@ -84,7 +84,7 @@ class PyConnectSource(BaseConnector, metaclass=ABCMeta):
         return None
 
     def _assign_consumer_to_last_offset(self):
-        partition = TopicPartition(self.config["offset_topic"], 0)
+        partition = TopicPartition(self.config.offset_topic, 0)
         _, high_offset = self._offset_consumer.get_watermark_offsets(partition)
         partition.offset = max(0, high_offset - 1)
         self._offset_consumer.assign([partition])
@@ -136,11 +136,7 @@ class PyConnectSource(BaseConnector, metaclass=ABCMeta):
         self._create_schemas_if_necessary(key, value)
 
         self._producer.produce(
-            key=key,
-            value=value,
-            key_schema=self._key_schema,
-            value_schema=self._value_schema,
-            topic=self.config["topic"],
+            key=key, value=value, key_schema=self._key_schema, value_schema=self._value_schema, topic=self.config.topic
         )
 
     def _create_schemas_if_necessary(self, key, value) -> None:
@@ -182,9 +178,7 @@ class PyConnectSource(BaseConnector, metaclass=ABCMeta):
         if self._offset_schema is None:
             self._offset_schema = to_value_schema(idx)
 
-        self._producer.produce(
-            topic=self.config["offset_topic"], key=None, value=idx, value_schema=self._offset_schema
-        )
+        self._producer.produce(topic=self.config.offset_topic, key=None, value=idx, value_schema=self._offset_schema)
         self._producer.flush()
 
     @abstractmethod
