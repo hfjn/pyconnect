@@ -10,8 +10,7 @@ from typing import Any, Callable, Dict, Optional
 from confluent_kafka import KafkaException
 from confluent_kafka.cimpl import Message
 from loguru import logger
-from pyconnect import PyConnectException
-from pyconnect.errors import NoCrashInfo
+from pyconnect.errors import NoCrashInfo, PyConnectException
 
 
 def message_repr(msg: Message) -> str:

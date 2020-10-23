@@ -8,10 +8,8 @@ from confluent_kafka import Message, TopicPartition
 from confluent_kafka.avro import AvroConsumer
 from confluent_kafka.cimpl import KafkaError, KafkaException
 from loguru import logger
-from pyconnect.config import configure_logging
-
-from .config import SinkConfig
-from .core import BaseConnector, Status, hide_sensitive_values, message_repr
+from pyconnect.config import SinkConfig, configure_logging
+from pyconnect.core import BaseConnector, Status, hide_sensitive_values, message_repr
 
 
 class MessageType(Enum):
