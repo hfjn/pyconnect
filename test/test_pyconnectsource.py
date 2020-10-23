@@ -16,10 +16,10 @@ def source_factory(message_factory):
     Creates a factory, that can be used to create readily usable instances of :class:`test.utils.PyConnectTestSource`.
     """
     config = SourceConfig(
-        dict(
-            bootstrap_servers="testserver",
+        **dict(
+            bootstrap_servers=["testserver"],
             offset_topic="testtopic",
-            schema_registry="testregistry",
+            schema_registry="http://testregistry",
             offset_commit_interval=5,
             topic="testtopic",
             unify_logging=False,

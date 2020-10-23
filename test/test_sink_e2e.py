@@ -22,7 +22,7 @@ def connect_sink_factory(
     topic_id, partitions = topic_and_partitions
     group_id = topic_id + "_sink_group_id"
     sink_config = SinkConfig(
-        {
+        **{
             "bootstrap_servers": running_cluster_config["broker"],
             "schema_registry": running_cluster_config["schema-registry"],
             "offset_commit_interval": 1,

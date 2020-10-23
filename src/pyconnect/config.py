@@ -10,7 +10,7 @@ import os
 import sys
 import warnings
 from pathlib import Path
-from typing import Dict, List, Optional, Type, Union
+from typing import Dict, List, Type, Union
 
 import yaml
 from loguru import logger
@@ -155,7 +155,7 @@ class BaseConfig(BaseSettings):
     offset_commit_interval: datetime.timedelta = datetime.timedelta(minutes=30)
     sink_commit_retry_count: int = 2
     hash_sensitive_values: bool = True
-    kafka_opts: Optional[Dict[str, str]] = None
+    kafka_opts: Dict[str, str] = {}
     unify_logging: bool = False
 
     class Config:

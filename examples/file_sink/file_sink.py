@@ -5,8 +5,9 @@ from typing import List, cast
 
 from confluent_kafka.cimpl import Message
 from loguru import logger
-from pyconnect import PyConnectSink, SinkConfig
+from pyconnect.config import SinkConfig
 from pyconnect.core import Status
+from pyconnect.pyconnectsink import PyConnectSink
 
 
 class FileSinkConfig(SinkConfig):

@@ -20,7 +20,7 @@ def source_factory(
     topic_id, _ = topic_and_partitions
 
     config = SourceConfig(
-        dict(
+        **dict(
             bootstrap_servers=running_cluster_config["broker"],
             schema_registry=running_cluster_config["schema-registry"],
             offset_topic=f"{topic_id}_offsets",

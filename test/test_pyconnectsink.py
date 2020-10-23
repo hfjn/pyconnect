@@ -2,6 +2,7 @@ from typing import Callable, cast
 from unittest import mock
 
 import pytest
+from loguru import logger
 from pyconnect.config import SinkConfig
 from pyconnect.errors import NoCrashInfo
 from pyconnect.pyconnectsink import Status
@@ -14,17 +15,18 @@ SinkFactory = Callable[..., PyConnectTestSink]
 @pytest.fixture
 def sink_factory():
     conf = SinkConfig(
-        dict(
-            bootstrap_servers="localhost",
-            schema_registry="localhost",
+        **dict(
+            bootstrap_servers=["localhost:9092"],
+            schema_registry="http://localhost",
             offset_commit_interval=1,
             sink_commit_retry_count=2,
             group_id="group_id",
             poll_timeout=1,
-            topics="",
+            topics=["test"],
             unify_logging=False,
         )
     )
+    logger.debug(conf)
     with mock.patch("pyconnect.pyconnectsink.RichAvroConsumer", autospec=True):
 
         def sink_factory_():
