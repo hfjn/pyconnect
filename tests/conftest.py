@@ -2,7 +2,6 @@ import itertools as it
 import logging
 import random
 from functools import partial
-from test.utils import TEST_DIR, TestException, rand_text
 from typing import Any, Callable, Dict, Iterable, List, Tuple
 from unittest import mock
 
@@ -16,12 +15,14 @@ from pyconnect.avroparser import to_key_schema, to_value_schema
 from pyconnect.core import Status
 from pykafka import KafkaClient, Topic
 
+from .utils import TEST_DIR, TestException, rand_text
+
 logging.basicConfig(
     format="%(asctime)s|%(threadName)s|%(levelname)s|%(name)s|%(message)s",
     filename=str(TEST_DIR / "test.log"),
     filemode="w",
 )
-logger = logging.getLogger("test.conftest")
+logger = logging.getLogger("tests.conftest")
 
 
 def pytest_configure(config):
@@ -188,7 +189,7 @@ def message_factory() -> Iterable[Callable[..., Message]]:
     """
     Creates a factory for mocked :class:`confluent_kafka.Message` object.
     """
-    with mock.patch("test.conftest.Message", autospec=True):
+    with mock.patch("tests.conftest.Message", autospec=True):
 
         def message_factory_(key="key", value="value", topic="topic", offset=0, partition=0, error=None):
             msg = Message()
@@ -209,7 +210,7 @@ def error_message_factory(message_factory) -> Callable[..., Message]:
     Creates a factory for mockec :class:`confluent_kafka.Message` that return a :class:`confluent_kafka.KafkaError`
     when :meth:`confluent_kafka.Message.error` is called on them.
     """
-    with mock.patch("test.conftest.KafkaError", autospec=True):
+    with mock.patch("tests.conftest.KafkaError", autospec=True):
 
         def error_message_factory_(error_code=None):
             error = KafkaError()

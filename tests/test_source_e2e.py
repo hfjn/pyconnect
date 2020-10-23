@@ -1,10 +1,10 @@
-from test.conftest import ConsumeAll, RecordList
 from time import sleep
 from typing import Callable, Dict, Iterable, Tuple
 
 import pytest
 from pyconnect.config import SourceConfig
 
+from .conftest import ConsumeAll, RecordList
 from .utils import PyConnectTestSource, compare_lists_unordered
 
 SourceFactory = Callable[..., PyConnectTestSource]
